@@ -107,6 +107,18 @@ fn comment_detected(line: &str) -> bool {
     false
 }
 
+fn filter_constructs_by_variant<'a>(constructs: &'a [ConstructInfo], variant: &ConstructInfo) -> Vec<&'a ConstructInfo> {
+    constructs.iter().filter(|&construct| {
+        match (construct, variant) {
+            (ConstructInfo::Class { .. }, ConstructInfo::Class { .. }) => true,
+            (ConstructInfo::Struct { .. }, ConstructInfo::Struct { .. }) => true,
+            (ConstructInfo::Enum { .. }, ConstructInfo::Enum { .. }) => true,
+            (ConstructInfo::Interface { .. }, ConstructInfo::Interface { .. }) => true,
+            _ => false,
+        }
+    }).collect()
+}
+
 fn main() {
     let args = Cli::from_args();
     println!("Package directory {:?}", args.package_dir);
@@ -115,7 +127,27 @@ fn main() {
 
     let cs_files = find_cs_files(&args.package_dir);
     let constructs = parse_cs_files(cs_files);
-    for construct in constructs {
-        println!("Found Construct: {:?}", construct);
+
+    let construct_variants = [
+        ConstructInfo::Class { name: String::new() },
+        ConstructInfo::Struct { name: String::new() },
+        ConstructInfo::Enum { name: String::new() },
+        ConstructInfo::Interface { name: String::new() },
+    ];
+
+    for variant in &construct_variants {
+        match variant {
+            ConstructInfo::Class { .. } => println!("Classes:"),
+            ConstructInfo::Struct { .. } => println!("Structs:"),
+            ConstructInfo::Enum { .. } => println!("Enums:"),
+            ConstructInfo::Interface { .. } => println!("Interfaces:"),
+            _ => {}
+        }
+
+        let filtered_constructs = filter_constructs_by_variant(&constructs, variant);
+        for construct in filtered_constructs {
+            println!("{:?}", construct);
+        }
+        println!();
     }
 }
