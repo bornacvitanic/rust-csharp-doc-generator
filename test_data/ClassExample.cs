@@ -1,7 +1,14 @@
+// <summary>
+/// XML documentation comment for a class !Comment!
+/// </summary>
 public class PublicClass {
     // Class body
+    // Single-line comment inside a class !Comment!
+    /* Multi-line comment inside a class !Comment!
+       that spans multiple lines */
 }
 
+// This is a single-line comment before a class !Comment!
 private class PrivateClass {
     // Class body
 }
@@ -29,3 +36,6 @@ public partial class PartialClass {
 public partial class PartialClass {
     // Class body
 }
+
+// This is a comment that mentions class but should not be detected
+// public class CommentedOutClass { }

@@ -1,3 +1,6 @@
+/// <summary>
+/// XML documentation comment for an interface !Comment!
+/// </summary>
 public interface PublicInterface {
     // Interface body
 }

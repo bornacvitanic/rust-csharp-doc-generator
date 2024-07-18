@@ -53,15 +53,16 @@ fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     let mut constructs = Vec::new();
     let mut seen_partial_classes = HashSet::new();
 
+
     for file_path in files {
         let mut file_content = String::new();
         File::open(&file_path).unwrap().read_to_string(&mut file_content).unwrap();
 
         for line in file_content.lines() {
-            // Skip lines with comments before keywords
-            if line.contains("//") && line.find("//").unwrap() < line.find("class").unwrap_or(usize::MAX) {
-                continue;
-            }
+            let line = line.trim();
+
+            if comment_detected(line) { continue; }
+
             if let Some(name) = extract_definition(line, "class") {
                 if seen_partial_classes.insert(name.clone()) {
                     constructs.push(ConstructInfo::Class { name });
@@ -77,6 +78,33 @@ fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     }
 
     constructs
+}
+
+fn comment_detected(line: &str) -> bool {
+    let mut inside_multiline_comment = false;
+
+    // Handle multi-line comments
+    if inside_multiline_comment {
+        if line.contains("*/") {
+            inside_multiline_comment = false;
+        }
+        return true;
+    }
+    if line.contains("/*") {
+        inside_multiline_comment = true;
+        return true;
+    }
+
+    // Skip single-line and XML documentation comments
+    if line.starts_with("//") || line.starts_with("///") {
+        return true;
+    }
+
+    // Skip lines with comments before keywords
+    if line.contains("//") && line.find("//").unwrap() < line.find("class").unwrap_or(usize::MAX) {
+        return true;
+    }
+    false
 }
 
 fn main() {
