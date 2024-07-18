@@ -6,6 +6,7 @@ use std::fs::File;
 use std::io::Read;
 use serde::Serialize;
 use regex::Regex;
+use std::collections::HashSet;
 
 #[derive(StructOpt)]
 struct Cli {
@@ -50,14 +51,21 @@ fn extract_definition(line: &str, keyword: &str) -> Option<String> {
 
 fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     let mut constructs = Vec::new();
+    let mut seen_partial_classes = HashSet::new();
 
     for file_path in files {
         let mut file_content = String::new();
         File::open(&file_path).unwrap().read_to_string(&mut file_content).unwrap();
 
         for line in file_content.lines() {
+            // Skip lines with comments before keywords
+            if line.contains("//") && line.find("//").unwrap() < line.find("class").unwrap_or(usize::MAX) {
+                continue;
+            }
             if let Some(name) = extract_definition(line, "class") {
-                constructs.push(ConstructInfo::Class { name });
+                if seen_partial_classes.insert(name.clone()) {
+                    constructs.push(ConstructInfo::Class { name });
+                }
             } else if let Some(name) = extract_definition(line, "struct") {
                 constructs.push(ConstructInfo::Struct { name });
             } else if let Some(name) = extract_definition(line, "enum") {
