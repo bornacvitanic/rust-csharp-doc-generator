@@ -5,7 +5,8 @@ public class PublicClass {
     // Class body
     // Single-line comment inside a class !Comment!
     /* Multi-line comment inside a class !Comment!
-       that spans multiple lines */
+       that spans multiple lines. class !Comment!
+       class !Comment! */
 }
 
 // This is a single-line comment before a class !Comment!

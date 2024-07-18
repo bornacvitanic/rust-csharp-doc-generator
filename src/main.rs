@@ -52,16 +52,26 @@ fn extract_definition(line: &str, keyword: &str) -> Option<String> {
 fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     let mut constructs = Vec::new();
     let mut seen_partial_classes = HashSet::new();
-
+    let mut inside_multiline_comment = false;
 
     for file_path in files {
         let mut file_content = String::new();
-        File::open(&file_path).unwrap().read_to_string(&mut file_content).unwrap();
+        if let Ok(mut file) = File::open(&file_path) {
+            if file.read_to_string(&mut file_content).is_err() {
+                eprintln!("Error reading file: {:?}", file_path);
+                continue;
+            }
+        } else {
+            eprintln!("Error opening file: {:?}", file_path);
+            continue;
+        }
 
         for line in file_content.lines() {
             let line = line.trim();
 
-            if comment_detected(line) { continue; }
+            if comment_detected(line, &mut inside_multiline_comment) {
+                continue;
+            }
 
             if let Some(name) = extract_definition(line, "class") {
                 if seen_partial_classes.insert(name.clone()) {
@@ -80,18 +90,15 @@ fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     constructs
 }
 
-fn comment_detected(line: &str) -> bool {
-    let mut inside_multiline_comment = false;
-
-    // Handle multi-line comments
-    if inside_multiline_comment {
+fn comment_detected(line: &str, inside_multiline_comment: &mut bool) -> bool {
+    if *inside_multiline_comment {
         if line.contains("*/") {
-            inside_multiline_comment = false;
+            *inside_multiline_comment = false;
         }
         return true;
     }
     if line.contains("/*") {
-        inside_multiline_comment = true;
+        *inside_multiline_comment = true;
         return true;
     }
 
@@ -107,6 +114,7 @@ fn comment_detected(line: &str) -> bool {
     false
 }
 
+
 fn filter_constructs_by_variant<'a>(constructs: &'a [ConstructInfo], variant: &ConstructInfo) -> Vec<&'a ConstructInfo> {
     constructs.iter().filter(|&construct| {
         match (construct, variant) {
@@ -121,8 +129,8 @@ fn filter_constructs_by_variant<'a>(constructs: &'a [ConstructInfo], variant: &C
 
 fn main() {
     let args = Cli::from_args();
-    println!("Package directory {:?}", args.package_dir);
-    println!("Template file {:?}", args.template_file);
+    println!("Package directory: {:?}", args.package_dir);
+    println!("Template file: {:?}", args.template_file);
     println!("Output directory: {:?}", args.output_dir);
 
     let cs_files = find_cs_files(&args.package_dir);
@@ -141,7 +149,6 @@ fn main() {
             ConstructInfo::Struct { .. } => println!("Structs:"),
             ConstructInfo::Enum { .. } => println!("Enums:"),
             ConstructInfo::Interface { .. } => println!("Interfaces:"),
-            _ => {}
         }
 
         let filtered_constructs = filter_constructs_by_variant(&constructs, variant);
