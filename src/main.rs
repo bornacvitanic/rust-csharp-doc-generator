@@ -5,6 +5,7 @@ use walkdir::WalkDir;
 use std::fs::File;
 use std::io::Read;
 use serde::Serialize;
+use regex::Regex;
 
 #[derive(StructOpt)]
 struct Cli {
@@ -29,34 +30,45 @@ fn find_cs_files(dir: &PathBuf) -> Vec<PathBuf> {
 }
 
 #[derive(Debug, Serialize)]
-struct ClassInfo {
-    class_name: String,
-    methods: Vec<String>,
+enum ConstructInfo {
+    Class { name: String },
+    Struct { name: String },
+    Enum { name: String },
+    Interface { name: String },
 }
 
-fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ClassInfo> {
-    let mut class_infos = Vec::new();
+
+fn extract_definition(line: &str, keyword: &str) -> Option<String> {
+    let pattern = format!(r"\b{}\s+(\w+)", keyword);
+    let re = Regex::new(&pattern).unwrap();
+
+    if let Some(captures) = re.captures(line) {
+        return Some(captures[1].to_string());
+    }
+    None
+}
+
+fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
+    let mut constructs = Vec::new();
 
     for file_path in files {
         let mut file_content = String::new();
         File::open(&file_path).unwrap().read_to_string(&mut file_content).unwrap();
 
-        // Simplified parsing logic (placeholder for actual parser)
-        if let Some(class_name) = file_content.lines().find(|line| line.contains("class ")) {
-            let class_name = class_name.trim().to_string();
-            let methods = file_content.lines()
-                .filter(|line| line.contains("void ") || line.contains("int ") || line.contains("string "))
-                .map(|line| line.trim().to_string())
-                .collect();
-
-            class_infos.push(ClassInfo {
-                class_name,
-                methods,
-            });
+        for line in file_content.lines() {
+            if let Some(name) = extract_definition(line, "class") {
+                constructs.push(ConstructInfo::Class { name });
+            } else if let Some(name) = extract_definition(line, "struct") {
+                constructs.push(ConstructInfo::Struct { name });
+            } else if let Some(name) = extract_definition(line, "enum") {
+                constructs.push(ConstructInfo::Enum { name });
+            } else if let Some(name) = extract_definition(line, "interface") {
+                constructs.push(ConstructInfo::Interface { name });
+            }
         }
     }
 
-    class_infos
+    constructs
 }
 
 fn main() {
@@ -66,8 +78,8 @@ fn main() {
     println!("Output directory: {:?}", args.output_dir);
 
     let cs_files = find_cs_files(&args.package_dir);
-    let class_infos = parse_cs_files(cs_files);
-    for class_info in class_infos {
-        println!("Found Class: {:?}", class_info.class_name);
+    let constructs = parse_cs_files(cs_files);
+    for construct in constructs {
+        println!("Found Construct: {:?}", construct);
     }
 }

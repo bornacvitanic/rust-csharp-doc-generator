@@ -220,6 +220,7 @@ dependencies = [
 name = "documentation_generator"
 version = "0.1.0"
 dependencies = [
+ "regex",
  "serde",
  "structopt",
  "structopt-derive",
