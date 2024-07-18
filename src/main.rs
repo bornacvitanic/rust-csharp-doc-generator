@@ -1,3 +1,5 @@
+mod cli;
+
 use std::string::String;
 use structopt::StructOpt;
 use std::path::PathBuf;
@@ -7,16 +9,7 @@ use std::io::Read;
 use serde::Serialize;
 use regex::Regex;
 use std::collections::HashSet;
-
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(parse(from_os_str))]
-    package_dir: PathBuf,
-    #[structopt(parse(from_os_str))]
-    template_file: PathBuf,
-    #[structopt(parse(from_os_str))]
-    output_dir: PathBuf,
-}
+use crate::cli::Cli;
 
 fn find_cs_files(dir: &PathBuf) -> Vec<PathBuf> {
     let mut cs_files = Vec::new();
