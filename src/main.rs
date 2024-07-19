@@ -42,7 +42,7 @@ fn main() {
         println!();
     }
 
-    // Load the template and generate documentation
-    let tera = load_template(&args.template_file);
-    generate_documentation(constructs, tera, &args.output_dir, &args.output_file);
+    // Load the template
+    let template = load_template(&args.template_file);
+    generate_documentation(constructs, &template, &args.output_dir, &args.output_file);
 }

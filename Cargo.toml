@@ -7,7 +7,6 @@ edition = "2021"
 # Dependencies for parsing C# files and handling templates
 walkdir = "2.3"
 serde = { version = "1.0", features = ["derive"] }
-tera = "1.10"
 regex = "1.5"
 #To set up a basic command-line interface (CLI)
 structopt = "0.3"
