@@ -87,4 +87,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-If you have any questions, feel free to reach out to the project maintainers.
+- **Email**: [borna.cvitanic@gmail.com](mailto:borna.cvitanic@gmail.com)
+- **GitHub Issues**: [GitHub Issues Page](https://github.com/bornacvitanic/rust-csharp-doc-generator/issues)
