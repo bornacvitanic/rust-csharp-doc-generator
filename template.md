@@ -1,7 +1,7 @@
-# Fearem [System name] System
+# Documentation for [System Name]
 
 ## Overview
-[Short information packed summary of the system. No need to start it off by repeating the system name, just go immediately into describing what it is. No need to mention it is for Unity, that is self explanatory.]
+[Brief overview of the system]
 
 ## Key Interfaces
 - **`{{ interface }}`**: [one_sentence_summary].
