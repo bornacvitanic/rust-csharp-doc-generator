@@ -57,8 +57,6 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     let mut inside_multiline_comment = false;
 
     let access_modifier_regex = Regex::new(r"(?m)^\s*(public|private|protected|internal)").unwrap();
-    let docstring_regex = Regex::new(r"(?m)^\s*///\s*(.*)$").unwrap();
-    let xml_tag_regex = Regex::new(r"</?[^>]+>").unwrap();
 
     for file_path in files {
         let mut file_content = String::new();
@@ -77,19 +75,19 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
         for line in file_content.lines() {
             let line = line.trim();
 
-            if let Some(captures) = docstring_regex.captures(line) {
-                let doc_line = captures.get(1).unwrap().as_str().to_string();
-                let doc_line = xml_tag_regex.replace_all(&doc_line, "").to_string();
-                current_docstring = match current_docstring {
-                    Some(mut existing) => {
-                        existing.push(' ');
-                        existing.push_str(&doc_line);
-                        Some(existing)
-                    },
-                    None => Some(doc_line)
-                };
-                continue;
-            }
+            match extract_docstring(line){
+                Some(doc_line) => {
+                    current_docstring = match current_docstring {
+                        Some(mut existing) => {
+                            existing.push(' ');
+                            existing.push_str(&doc_line);
+                            Some(existing)
+                        },
+                        None => Some(doc_line)
+                    };
+                }
+                None => {}
+            };
 
             if comment_detected(line, &mut inside_multiline_comment) {
                 continue;
@@ -146,6 +144,18 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     }
 
     constructs
+}
+
+fn extract_docstring(line: &str) -> Option<String> {
+    let docstring_regex = Regex::new(r"(?m)^\s*///\s*(.*)$").unwrap();
+    let xml_tag_regex = Regex::new(r"</?[^>]+>").unwrap();
+    if let Some(captures) = docstring_regex.captures(line) {
+        let doc_line = captures.get(1).unwrap().as_str().to_string();
+        let doc_line = xml_tag_regex.replace_all(&doc_line, "").to_string();
+        Some(doc_line)
+    } else {
+        None
+    }
 }
 
 pub fn comment_detected(line: &str, inside_multiline_comment: &mut bool) -> bool {
