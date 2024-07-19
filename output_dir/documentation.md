@@ -12,7 +12,7 @@
 - **`InnerInterface`**: [one_sentence_summary].
 
 ## Main Classes
-- **`PublicClass`**: This is a sample class with varied XML tags.It demonstrates how to use multiple types of documentation comments..
+- **`PublicClass`**: This is a sample class with varied XML tags. It demonstrates how to use multiple types of documentation comments..
 - **`PrivateClass`**: [one_sentence_summary].
 - **`ProtectedClass`**: [one_sentence_summary].
 - **`InternalClass`**: [one_sentence_summary].
