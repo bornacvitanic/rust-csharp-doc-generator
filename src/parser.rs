@@ -6,9 +6,12 @@ use regex::Regex;
 use serde::Serialize;
 use walkdir::WalkDir;
 use strum_macros::EnumIter;
+use strum_macros::{EnumString, Display};
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq, EnumString, Display, EnumIter)]
+#[strum(serialize_all = "snake_case")]
 pub enum AccessModifier {
     Public,
     Private,
@@ -34,6 +37,14 @@ pub enum ConstructType {
 impl ConstructType {
     pub fn as_lowercase(&self) -> String {
         format!("{:?}", self).to_lowercase()
+    }
+}
+
+impl AccessModifier {
+    pub fn variants_as_regex() -> String {
+        let variants: Vec<String> = AccessModifier::iter().map(|v| v.to_string()).collect();
+        let pattern = variants.join("|");
+        format!(r"(?m)^\s*({})", pattern)
     }
 }
 
@@ -121,17 +132,12 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     constructs
 }
 
-fn extract_access_modifier(line: &str) -> AccessModifier {
-    let access_modifier_regex = Regex::new(r"(?m)^\s*(public|private|protected|internal)").unwrap();
+pub fn extract_access_modifier(line: &str) -> AccessModifier {
+    let access_modifier_regex = Regex::new(&AccessModifier::variants_as_regex()).unwrap();
 
     if let Some(captures) = access_modifier_regex.captures(line) {
-        match captures.get(1).unwrap().as_str() {
-            "public" => AccessModifier::Public,
-            "private" => AccessModifier::Private,
-            "protected" => AccessModifier::Protected,
-            "internal" => AccessModifier::Internal,
-            _ => AccessModifier::Private,
-        }
+        let modifier_str = captures.get(1).unwrap().as_str();
+        AccessModifier::from_str(modifier_str).unwrap_or(AccessModifier::Private)
     } else {
         AccessModifier::Private
     }
