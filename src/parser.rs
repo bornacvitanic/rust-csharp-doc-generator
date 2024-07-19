@@ -56,8 +56,6 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     let mut seen_partial_classes = HashSet::new();
     let mut inside_multiline_comment = false;
 
-    let access_modifier_regex = Regex::new(r"(?m)^\s*(public|private|protected|internal)").unwrap();
-
     for file_path in files {
         let mut file_content = String::new();
         if let Ok(mut file) = File::open(&file_path) {
@@ -75,7 +73,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
         for line in file_content.lines() {
             let line = line.trim();
 
-            match extract_docstring(line){
+            match extract_docstring(line) {
                 Some(doc_line) => {
                     current_docstring = match current_docstring {
                         Some(mut existing) => {
@@ -93,17 +91,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
                 continue;
             }
 
-            let access_modifier = if let Some(captures) = access_modifier_regex.captures(line) {
-                match  captures.get(1).unwrap().as_str() {
-                    "public" => AccessModifier::Public,
-                    "private" => AccessModifier::Private,
-                    "protected" => AccessModifier::Protected,
-                    "internal" => AccessModifier::Internal,
-                    _ => AccessModifier::Private,
-                }
-            } else {
-                AccessModifier::Private
-            };
+            let access_modifier = extract_access_modifier(line);
 
             if let Some(name) = extract_definition(line, "class") {
                 if seen_partial_classes.insert(name.clone()) {
@@ -144,6 +132,22 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     }
 
     constructs
+}
+
+fn extract_access_modifier(line: &str) -> AccessModifier {
+    let access_modifier_regex = Regex::new(r"(?m)^\s*(public|private|protected|internal)").unwrap();
+
+    if let Some(captures) = access_modifier_regex.captures(line) {
+        match captures.get(1).unwrap().as_str() {
+            "public" => AccessModifier::Public,
+            "private" => AccessModifier::Private,
+            "protected" => AccessModifier::Protected,
+            "internal" => AccessModifier::Internal,
+            _ => AccessModifier::Private,
+        }
+    } else {
+        AccessModifier::Private
+    }
 }
 
 fn extract_docstring(line: &str) -> Option<String> {
