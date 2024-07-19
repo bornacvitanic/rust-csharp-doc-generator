@@ -75,6 +75,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
     let mut seen_partial_classes = HashSet::new();
     let mut inside_multiline_comment = false;
 
+    let mut extractor = DocstringExtractor::new();
     for file_path in files {
         let mut file_content = String::new();
         if let Ok(mut file) = File::open(&file_path) {
@@ -92,7 +93,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
         for line in file_content.lines() {
             let line = line.trim();
 
-            match extract_docstring(line) {
+            match extractor.extract_docstring(line) {
                 Some(doc_line) => {
                     current_docstring = match current_docstring {
                         Some(mut existing) => {
@@ -143,14 +144,46 @@ pub fn extract_access_modifier(line: &str) -> AccessModifier {
     }
 }
 
-fn extract_docstring(line: &str) -> Option<String> {
-    let docstring_regex = Regex::new(r"(?m)^\s*///\s*(.*)$").unwrap();
-    let xml_tag_regex = Regex::new(r"</?[^>]+>").unwrap();
-    if let Some(captures) = docstring_regex.captures(line) {
-        let doc_line = captures.get(1).unwrap().as_str().to_string();
-        let doc_line = xml_tag_regex.replace_all(&doc_line, "").to_string();
-        Some(doc_line)
-    } else {
+struct DocstringExtractor {
+    in_summary: bool,
+    summary_content: String,
+}
+
+impl DocstringExtractor {
+    fn new() -> Self {
+        Self {
+            in_summary: false,
+            summary_content: String::new(),
+        }
+    }
+
+    fn extract_docstring(&mut self, line: &str) -> Option<String> {
+        let docstring_regex = Regex::new(r"^\s*///\s*(.*)$").unwrap();
+        let xml_tag_regex = Regex::new(r"</?[^>]+>").unwrap();
+
+        if let Some(captures) = docstring_regex.captures(line) {
+            let doc_line = captures.get(1).unwrap().as_str();
+
+            if doc_line.contains("<summary>") {
+                self.in_summary = true;
+                if let Some(start) = doc_line.find("<summary>") {
+                    self.summary_content.push_str(&doc_line[start + 9..]); // Append text after <summary>
+                }
+            } else if doc_line.contains("</summary>") {
+                if let Some(end) = doc_line.find("</summary>") {
+                    self.summary_content.push_str(&doc_line[..end]); // Append text before </summary>
+                }
+                self.in_summary = false;
+
+                // Clean the accumulated summary content and return it
+                let cleaned_text = xml_tag_regex.replace_all(&self.summary_content, "").to_string();
+                self.summary_content.clear(); // Clear the content for the next block
+                return Some(cleaned_text.trim().to_string());
+            } else if self.in_summary {
+                self.summary_content.push_str(doc_line);
+            }
+        }
+
         None
     }
 }
