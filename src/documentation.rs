@@ -46,6 +46,7 @@ pub fn generate_documentation(
 
     let mut expanded_template= template.to_string();
     for construct in ConstructType::iter() {
+        if !construct_map.contains_key(&construct) { continue; }
         let construct_identifier = format!("{{{{ {} }}}}", construct.as_lowercase());
         expanded_template = expand_template(&mut expanded_template, &*construct_identifier, &construct_map[&construct], "[one_sentence_summary]");
     }
