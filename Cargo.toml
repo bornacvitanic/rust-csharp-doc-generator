@@ -1,6 +1,10 @@
 [package]
 name = "documentation_generator"
 version = "0.1.0"
+authors = ["Borna Cvitanić borna.cvitanic@gmail.com"]
+description = "Rust-based documentation generator for C# codebases. It scans C# source files, extracts relevant constructs (classes, structs, enums, and interfaces), and generates documentation based on a provided template."
+repository = "https://github.com/bornacvitanic/rust-csharp-doc-generator"
+license = "MIT"
 edition = "2021"
 
 [dependencies]
