@@ -1,5 +1,6 @@
-// <summary>
-/// XML documentation comment for a class !Comment!
+/// <summary>
+/// XML documentation comment for a class !Comment!.
+/// It has multiple lines.
 /// </summary>
 public class PublicClass {
     // Class body
