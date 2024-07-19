@@ -58,7 +58,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
 
     let access_modifier_regex = Regex::new(r"(?m)^\s*(public|private|protected|internal)").unwrap();
     let docstring_regex = Regex::new(r"(?m)^\s*///\s*(.*)$").unwrap();
-    let xml_tag_regex = Regex::new(r"</?summary>").unwrap();
+    let xml_tag_regex = Regex::new(r"</?[^>]+>").unwrap();
 
     for file_path in files {
         let mut file_content = String::new();
