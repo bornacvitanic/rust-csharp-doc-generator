@@ -43,6 +43,17 @@ fn main() {
     }
 
     // Load the template
-    let template = load_template(&args.template_file);
-    generate_documentation(constructs, &template, &args.output_dir, &args.output_file);
+    // Load the template
+    let template = match load_template(&args.template_file) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("Failed to load template: {}", e);
+            return;
+        }
+    };
+
+    // Generate the documentation
+    if let Err(e) = generate_documentation(constructs, &template, &args.output_dir, &args.output_file) {
+        eprintln!("Failed to generate documentation: {}", e);
+    }
 }

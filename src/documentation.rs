@@ -1,12 +1,14 @@
 use std::fs::File;
+use std::io;
 use std::io::{Read, Write};
 use std::path::PathBuf;
 use crate::parser::ConstructInfo;
 
-pub fn load_template(template_file: &PathBuf) -> String {
+pub fn load_template(template_file: &PathBuf) -> Result<String, io::Error> {
     let mut template_content = String::new();
-    File::open(template_file).unwrap().read_to_string(&mut template_content).unwrap();
-    template_content
+    let mut file = File::open(template_file)?;
+    file.read_to_string(&mut template_content)?;
+    Ok(template_content)
 }
 
 fn expand_template(template: &str, placeholder: &str, items: &[String]) -> String {
@@ -31,7 +33,7 @@ pub fn generate_documentation(
     template: &str,
     output_dir: &PathBuf,
     output_file: &PathBuf
-) {
+) -> Result<(), io::Error> {
     let mut interfaces = Vec::new();
     let mut classes = Vec::new();
     let mut structs = Vec::new();
@@ -52,6 +54,7 @@ pub fn generate_documentation(
     let expanded_template = expand_template(&expanded_template, "{{ enum }}", &enums);
 
     let output_path = output_dir.join(output_file);
-    let mut output_file = File::create(output_path).unwrap();
-    output_file.write_all(expanded_template.as_bytes()).unwrap();
+    let mut output_file = File::create(output_path)?;
+    output_file.write_all(expanded_template.as_bytes())?;
+    Ok(())
 }
