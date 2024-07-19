@@ -107,7 +107,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
                 None => {}
             };
 
-            if comment_detected(line, &mut inside_multiline_comment) {
+            if skip_due_to_comment(line, &mut inside_multiline_comment) {
                 continue;
             }
 
@@ -207,7 +207,7 @@ impl DocstringExtractor {
     }
 }
 
-pub fn comment_detected(line: &str, inside_multiline_comment: &mut bool) -> bool {
+pub fn skip_due_to_comment(line: &str, inside_multiline_comment: &mut bool) -> bool {
     let mut result = false;
 
     if line.contains("/*") {
@@ -227,9 +227,15 @@ pub fn comment_detected(line: &str, inside_multiline_comment: &mut bool) -> bool
         result = true;
     }
 
-    // Skip lines with comments before keywords
-    if line.contains("//") && line.find("//").unwrap() < line.find("class").unwrap_or(usize::MAX) {
-        result = true;
+    // Skip lines with comments before keywords for all construct types
+    if line.contains("//") {
+        for construct in ConstructType::iter() {
+            if let Some(keyword_pos) = line.find(&construct.as_lowercase()) {
+                if line.find("//").unwrap() < keyword_pos {
+                    return true;
+                }
+            }
+        }
     }
     result
 }
@@ -339,12 +345,63 @@ mod tests{
     }
 
     #[test]
-    fn test_comment_detected() {
+    fn test_skip_due_to_comment() {
         let mut inside_multiline_comment = false;
-        let line = "/* This is a comment */";
-        assert!(comment_detected(line, &mut inside_multiline_comment));
+
+        // Test single-line comment
+        let line = "// This is a single-line comment";
+        assert!(skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test XML documentation comment
+        let line = "/// This is an XML doc comment";
+        assert!(skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test multi-line comment start and end on the same line
+        let line = "/* This is a multi-line comment */";
+        assert!(skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test multi-line comment start
+        let line = "/* This is a multi-line comment";
+        assert!(skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(inside_multiline_comment);
+
+        // Test multi-line comment end
+        let line = "still in multi-line comment */";
+        assert!(skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test line with construct type and comment after it
+        let line = "public class MyClass // This is a comment";
+        assert!(!skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test line with construct type and comment before it
+        let line = "// This is a comment before class definition\npublic class MyClass";
+        assert!(skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test line with construct type and no comment
+        let line = "public class MyClass";
+        assert!(!skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        // Test line with construct type and comment before keyword for other construct types
+        let line = "public struct MyStruct // Comment";
+        assert!(!skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        let line = "public enum MyEnum // Comment";
+        assert!(!skip_due_to_comment(line, &mut inside_multiline_comment));
+        assert!(!inside_multiline_comment);
+
+        let line = "public interface MyInterface // Comment";
+        assert!(!skip_due_to_comment(line, &mut inside_multiline_comment));
         assert!(!inside_multiline_comment);
     }
+
 
     #[test]
     fn test_filter_constructs_by_variant() {
