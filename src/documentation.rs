@@ -36,7 +36,7 @@ pub fn generate_documentation(
     constructs: Vec<ConstructInfo>,
     template: &str,
     output_dir: &PathBuf,
-    output_file: &PathBuf
+    output_file: &PathBuf,
 ) -> Result<(), io::Error> {
     let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
 
@@ -44,11 +44,12 @@ pub fn generate_documentation(
         construct_map.entry(construct.construct_type.clone()).or_insert_with(Vec::new).push(construct);
     }
 
-    let mut expanded_template= template.to_string();
-    for construct in ConstructType::iter() {
-        if !construct_map.contains_key(&construct) { continue; }
-        let construct_identifier = format!("{{{{ {} }}}}", construct.as_lowercase());
-        expanded_template = expand_template(&mut expanded_template, &*construct_identifier, &construct_map[&construct], "[one_sentence_summary]");
+    let mut expanded_template = template.to_string();
+    for construct_type in ConstructType::iter() {
+        if let Some(constructs) = construct_map.get(&construct_type) {
+            let construct_identifier = format!("{{{{ {} }}}}", construct_type.as_lowercase());
+            expanded_template = expand_template(&mut expanded_template, &*construct_identifier, constructs, "[one_sentence_summary]");
+        }
     }
 
     let output_path = output_dir.join(output_file);
