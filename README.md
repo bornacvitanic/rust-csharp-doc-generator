@@ -66,3 +66,25 @@ This project is a Rust-based documentation generator for C# codebases. It scans 
 ├── Cargo.toml
 └── README.md
 ```
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+- [walkdir](https://docs.rs/walkdir/) - Library for recursive directory traversal
+- [serde](https://docs.rs/serde/) - Library for serialization and deserialization
+- [regex](https://docs.rs/regex/) - Library for regular expressions
+- [strum](https://docs.rs/strum/) - Library for working with enums
+- [strum_macros](https://docs.rs/strum_macros/) - Macros for working with enums
+- [structopt](https://docs.rs/structopt/) - Library for command-line argument parsing
+- [structopt-derive](https://docs.rs/structopt-derive/) - Derive macros for `structopt`
+
+## Contact
+
+If you have any questions, feel free to reach out to the project maintainers.
