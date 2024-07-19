@@ -5,6 +5,8 @@ use std::path::PathBuf;
 use regex::Regex;
 use serde::Serialize;
 use walkdir::WalkDir;
+use strum_macros::EnumIter;
+use strum::IntoEnumIterator;
 
 #[derive(Debug, Serialize)]
 pub enum AccessModifier {
@@ -15,18 +17,24 @@ pub enum AccessModifier {
 }
 
 pub struct ConstructInfo {
-    pub name: String,
-    pub access_modifier: AccessModifier,
     pub docstring: Option<String>,
+    pub access_modifier: AccessModifier,
     pub construct_type: ConstructType,
+    pub name: String,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, EnumIter)]
 pub enum ConstructType {
     Class,
     Struct,
     Enum,
     Interface,
+}
+
+impl ConstructType {
+    pub fn as_lowercase(&self) -> String {
+        format!("{:?}", self).to_lowercase()
+    }
 }
 
 pub fn find_cs_files(dir: &PathBuf) -> Vec<PathBuf> {
@@ -93,40 +101,19 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
 
             let access_modifier = extract_access_modifier(line);
 
-            if let Some(name) = extract_definition(line, "class") {
-                if seen_partial_classes.insert(name.clone()) {
-                    constructs.push(ConstructInfo {
-                        name,
-                        access_modifier,
-                        docstring: current_docstring.clone(),
-                        construct_type: ConstructType::Class,
-                    });
-                    current_docstring = None; // Reset the docstring after use
+            for construct in ConstructType::iter() {
+                if let Some(name) = extract_definition(line, &*construct.as_lowercase()) {
+                    if construct != ConstructType::Class || seen_partial_classes.insert(name.clone()) {
+                        constructs.push(ConstructInfo {
+                            docstring: current_docstring.clone(),
+                            access_modifier,
+                            construct_type: construct,
+                            name,
+                        });
+                        current_docstring = None; // Reset the docstring after use
+                        break;
+                    }
                 }
-            } else if let Some(name) = extract_definition(line, "struct") {
-                constructs.push(ConstructInfo {
-                    name,
-                    access_modifier,
-                    docstring: current_docstring.clone(),
-                    construct_type: ConstructType::Struct,
-                });
-                current_docstring = None;
-            } else if let Some(name) = extract_definition(line, "enum") {
-                constructs.push(ConstructInfo {
-                    name,
-                    access_modifier,
-                    docstring: current_docstring.clone(),
-                    construct_type: ConstructType::Enum,
-                });
-                current_docstring = None;
-            } else if let Some(name) = extract_definition(line, "interface") {
-                constructs.push(ConstructInfo {
-                    name,
-                    access_modifier,
-                    docstring: current_docstring.clone(),
-                    construct_type: ConstructType::Interface,
-                });
-                current_docstring = None;
             }
         }
     }
@@ -187,6 +174,6 @@ pub fn comment_detected(line: &str, inside_multiline_comment: &mut bool) -> bool
 }
 
 
-pub fn filter_constructs_by_variant<'a>(constructs: &'a [ConstructInfo], variant: ConstructType) -> Vec<&'a ConstructInfo> {
+pub fn filter_constructs_by_variant(constructs: &[ConstructInfo], variant: ConstructType) -> Vec<&ConstructInfo> {
     constructs.iter().filter(|&construct| construct.construct_type == variant).collect()
 }

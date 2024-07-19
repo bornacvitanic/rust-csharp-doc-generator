@@ -8,6 +8,8 @@ edition = "2021"
 walkdir = "2.3"
 serde = { version = "1.0", features = ["derive"] }
 regex = "1.5"
+strum = "0.26.3"
+strum_macros = "0.26.4"
 #To set up a basic command-line interface (CLI)
 structopt = "0.3"
 structopt-derive = "0.4"
