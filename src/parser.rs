@@ -26,7 +26,7 @@ pub struct ConstructInfo {
     pub name: String,
 }
 
-#[derive(Debug, Serialize, PartialEq, EnumIter)]
+#[derive(Debug, Eq, Hash, Clone, Serialize, PartialEq, EnumIter)]
 pub enum ConstructType {
     Class,
     Struct,
