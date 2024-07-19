@@ -9,4 +9,6 @@ pub struct Cli {
     pub template_file: PathBuf,
     #[structopt(parse(from_os_str))]
     pub output_dir: PathBuf,
+    #[structopt(parse(from_os_str))]
+    pub output_file: PathBuf,
 }

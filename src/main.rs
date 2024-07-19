@@ -1,11 +1,13 @@
 mod cli;
 mod parser;
+mod documentation;
 
 use std::string::String;
 use structopt::StructOpt;
 use std::io::Read;
 use serde::Serialize;
 use crate::cli::Cli;
+use crate::documentation::{generate_documentation, load_template};
 use crate::parser::{ConstructInfo, filter_constructs_by_variant, find_cs_files, parse_cs_files};
 
 fn main() {
@@ -13,6 +15,7 @@ fn main() {
     println!("Package directory: {:?}", args.package_dir);
     println!("Template file: {:?}", args.template_file);
     println!("Output directory: {:?}", args.output_dir);
+    println!("Output file: {:?}", args.output_file);
 
     let cs_files = find_cs_files(&args.package_dir);
     let constructs = parse_cs_files(cs_files);
@@ -38,4 +41,8 @@ fn main() {
         }
         println!();
     }
+
+    // Load the template and generate documentation
+    let tera = load_template(&args.template_file);
+    generate_documentation(constructs, tera, &args.output_dir, &args.output_file);
 }
