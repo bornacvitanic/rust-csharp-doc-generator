@@ -4,7 +4,7 @@
 [Short information packed summary of the system. No need to start it off by repeating the system name, just go immediately into describing what it is. No need to mention it is for Unity, that is self explanatory.]
 
 ## Key Interfaces
-- **`PublicInterface`**: [one_sentence_summary].
+- **`PublicInterface`**:  XML documentation comment for an interface !Comment! .
 - **`PrivateInterface`**: [one_sentence_summary].
 - **`ProtectedInterface`**: [one_sentence_summary].
 - **`InternalInterface`**: [one_sentence_summary].
@@ -12,7 +12,7 @@
 - **`InnerInterface`**: [one_sentence_summary].
 
 ## Main Classes
-- **`PublicClass`**: [one_sentence_summary].
+- **`PublicClass`**:  XML documentation comment for a class !Comment!. It has multiple lines. .
 - **`PrivateClass`**: [one_sentence_summary].
 - **`ProtectedClass`**: [one_sentence_summary].
 - **`InternalClass`**: [one_sentence_summary].
@@ -26,13 +26,13 @@
 ## Structs
 - **`MixedStruct1`**: [one_sentence_summary].
 - **`InnerStruct`**: [one_sentence_summary].
-- **`PublicStruct`**: [one_sentence_summary].
+- **`PublicStruct`**:  XML documentation comment for a struct !Comment! .
 - **`PrivateStruct`**: [one_sentence_summary].
 - **`ProtectedStruct`**: [one_sentence_summary].
 - **`InternalStruct`**: [one_sentence_summary].
 
 ## Enums
-- **`PublicEnum`**: [one_sentence_summary].
+- **`PublicEnum`**:  XML documentation comment for an enum !Comment! .
 - **`PrivateEnum`**: [one_sentence_summary].
 - **`ProtectedEnum`**: [one_sentence_summary].
 - **`InternalEnum`**: [one_sentence_summary].
