@@ -1,12 +1,12 @@
-mod cli;
-mod parser;
-mod documentation;
-
 use structopt::StructOpt;
 
 use crate::cli::Cli;
 use crate::documentation::{generate_documentation, load_template};
 use crate::parser::{find_cs_files, parse_cs_files};
+
+mod cli;
+mod parser;
+mod documentation;
 
 fn main() {
     let args = Cli::from_args();

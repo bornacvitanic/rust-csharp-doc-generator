@@ -21,7 +21,7 @@ fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<Co
     for line in template.lines() {
         let mut pass_through_line = true;
         for construct_type in ConstructType::iter() {
-            let construct_placeholder = construct_type.as_placeholder();
+            let construct_placeholder = construct_type.as_placeholder("_name");
             if line.contains(&construct_placeholder) {
                 if let Some(constructs) = construct_map.get(&construct_type) {
                     pass_through_line = false;
@@ -99,21 +99,27 @@ mod tests {
 
     #[test]
     fn test_expand_template() {
-        let template = "
+        let template = format!(
+            "
         # Documentation
 
         ## Classes
-        - **{{ class }}**: [one_sentence_summary]
+        - **{}**: [one_sentence_summary]
 
         ## Structs
-        - **{{ struct }}**: [one_sentence_summary]
+        - **{}**: [one_sentence_summary]
 
         ## Interfaces
-        - **{{ interface }}**: [one_sentence_summary]
+        - **{}**: [one_sentence_summary]
 
         ## Enums
-        - **{{ enum }}**: [one_sentence_summary]
-        ";
+        - **{}**: [one_sentence_summary]
+        ",
+            ConstructType::Class.as_placeholder("_name"),
+            ConstructType::Struct.as_placeholder("_name"),
+            ConstructType::Interface.as_placeholder("_name"),
+            ConstructType::Enum.as_placeholder("_name")
+        );
 
         let constructs = vec![
             ConstructInfo { name: "MyClass".to_string(), docstring: Some("This is a class.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Class },
@@ -123,7 +129,7 @@ mod tests {
         ];
 
         let construct_map = categorize_constructs(constructs);
-        let result = expand_template(template, &construct_map);
+        let result = expand_template(&template, &construct_map);
         let expected = "
         # Documentation
 

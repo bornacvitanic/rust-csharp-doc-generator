@@ -6,19 +6,19 @@
 
 ## Key Interfaces
 
-- **`{{ interface }}`**: [summary]
+- **`[interface_name]`**: [summary]
 
 ## Main Classes
 
-- **`{{ class }}`**: [one_sentence_summary]
+- **`[class_name]`**: [one_sentence_summary]
 
 ## Structs
 
-- **`{{ struct }}`**: [one_sentence_summary]
+- **`[struct_name]`**: [one_sentence_summary]
 
 ## Enums
 
-- **`{{ enum }}`**: [one_sentence_summary]
+- **`[enum_name]`**: [one_sentence_summary]
 
 ## Usage
 

@@ -40,8 +40,8 @@ impl ConstructType {
         format!("{:?}", self).to_lowercase()
     }
 
-    pub fn as_placeholder(&self) -> String {
-        format!("{{{{ {} }}}}", self.as_lowercase())
+    pub fn as_placeholder(&self, suffix: &str) -> String {
+        format!("[{}{}]", self.as_lowercase(), suffix)
     }
 }
 
