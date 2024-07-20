@@ -1,19 +1,24 @@
 # Documentation for [System Name]
 
 ## Overview
+
 [Brief overview of the system]
 
 ## Key Interfaces
-- **`{{ interface }}`**: [one_sentence_summary].
+
+- **`{{ interface }}`**: [summary]
 
 ## Main Classes
-- **`{{ class }}`**: [one_sentence_summary].
+
+- **`{{ class }}`**: [one_sentence_summary]
 
 ## Structs
-- **`{{ struct }}`**: [one_sentence_summary].
+
+- **`{{ struct }}`**: [one_sentence_summary]
 
 ## Enums
-- **`{{ enum }}`**: [one_sentence_summary].
+
+- **`{{ enum }}`**: [one_sentence_summary]
 
 ## Usage
 
