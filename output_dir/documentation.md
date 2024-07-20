@@ -1,43 +1,48 @@
 # Documentation for [System Name]
 
 ## Overview
+
 [Brief overview of the system]
 
 ## Key Interfaces
-- **`PublicInterface`**: XML documentation comment for an interface !Comment!.
-- **`PrivateInterface`**: [one_sentence_summary].
-- **`ProtectedInterface`**: [one_sentence_summary].
-- **`InternalInterface`**: [one_sentence_summary].
-- **`MixedInterface1`**: [one_sentence_summary].
-- **`InnerInterface`**: [one_sentence_summary].
+
+- **`PublicInterface`**: XML documentation comment for an interface !Comment!. It has multiple sentences.
+- **`PrivateInterface`**: [summary]
+- **`ProtectedInterface`**: [summary]
+- **`InternalInterface`**: [summary]
+- **`MixedInterface1`**: [summary]
+- **`InnerInterface`**: [summary]
 
 ## Main Classes
-- **`PublicClass`**: This is a sample class with varied XML tags. It demonstrates how to use multiple types of documentation comments..
-- **`PrivateClass`**: [one_sentence_summary].
-- **`ProtectedClass`**: [one_sentence_summary].
-- **`InternalClass`**: [one_sentence_summary].
-- **`AbstractClass`**: [one_sentence_summary].
-- **`StaticClass`**: [one_sentence_summary].
-- **`PartialClass`**: [one_sentence_summary].
-- **`MixedClass1`**: [one_sentence_summary].
-- **`OuterClass`**: [one_sentence_summary].
-- **`InnerClass`**: [one_sentence_summary].
+
+- **`PublicClass`**: This is a sample class with varied XML tags
+- **`PrivateClass`**: [one_sentence_summary]
+- **`ProtectedClass`**: [one_sentence_summary]
+- **`InternalClass`**: [one_sentence_summary]
+- **`AbstractClass`**: [one_sentence_summary]
+- **`StaticClass`**: [one_sentence_summary]
+- **`PartialClass`**: [one_sentence_summary]
+- **`MixedClass1`**: [one_sentence_summary]
+- **`OuterClass`**: [one_sentence_summary]
+- **`InnerClass`**: [one_sentence_summary]
 
 ## Structs
-- **`MixedStruct1`**: [one_sentence_summary].
-- **`InnerStruct`**: [one_sentence_summary].
-- **`PublicStruct`**: XML documentation comment for a struct !Comment!.
-- **`PrivateStruct`**: [one_sentence_summary].
-- **`ProtectedStruct`**: [one_sentence_summary].
-- **`InternalStruct`**: [one_sentence_summary].
+
+- **`MixedStruct1`**: [one_sentence_summary]
+- **`InnerStruct`**: [one_sentence_summary]
+- **`PublicStruct`**: XML documentation comment for a struct !Comment!
+- **`PrivateStruct`**: [one_sentence_summary]
+- **`ProtectedStruct`**: [one_sentence_summary]
+- **`InternalStruct`**: [one_sentence_summary]
 
 ## Enums
-- **`PublicEnum`**: XML documentation comment for an enum !Comment!.
-- **`PrivateEnum`**: [one_sentence_summary].
-- **`ProtectedEnum`**: [one_sentence_summary].
-- **`InternalEnum`**: [one_sentence_summary].
-- **`MixedEnum1`**: [one_sentence_summary].
-- **`InnerEnum`**: [one_sentence_summary].
+
+- **`PublicEnum`**: XML documentation comment for an enum !Comment!
+- **`PrivateEnum`**: [one_sentence_summary]
+- **`ProtectedEnum`**: [one_sentence_summary]
+- **`InternalEnum`**: [one_sentence_summary]
+- **`MixedEnum1`**: [one_sentence_summary]
+- **`InnerEnum`**: [one_sentence_summary]
 
 ## Usage
 

@@ -15,14 +15,21 @@ pub fn load_template(template_file: &PathBuf) -> Result<String, io::Error> {
     Ok(template_content)
 }
 
-fn expand_template(template: &mut String, placeholder: &str, items: &[ConstructInfo], summary_placeholder: &str) -> String {
+fn expand_template(template: &mut String, placeholder: &str, items: &[ConstructInfo]) -> String {
     let mut expanded_template = String::new();
 
     for line in template.lines() {
         if line.contains(placeholder) {
             for item in items {
-                let summary = item.docstring.clone().unwrap_or_else(|| summary_placeholder.to_string());
-                let expanded_line = line.replace(placeholder, &item.name).replace(summary_placeholder, &summary);
+                let mut expanded_line = line.replace(placeholder, &item.name);
+
+                if expanded_line.contains("[summary]") {
+                    let summary = item.docstring.clone().unwrap_or_else(|| "[summary]".to_string());
+                    expanded_line = expanded_line.replace("[summary]", &summary);
+                } else if expanded_line.contains("[one_sentence_summary]") {
+                    let summary = item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string());
+                    expanded_line = expanded_line.replace("[one_sentence_summary]", substring_until_dot(&summary));
+                }
                 expanded_template.push_str(&expanded_line);
                 expanded_template.push('\n');
             }
@@ -32,6 +39,10 @@ fn expand_template(template: &mut String, placeholder: &str, items: &[ConstructI
         }
     }
     expanded_template
+}
+
+fn substring_until_dot(s: &str) -> &str {
+    s.split('.').next().unwrap_or(s)
 }
 
 pub fn generate_documentation(
@@ -46,7 +57,7 @@ pub fn generate_documentation(
     for construct_type in ConstructType::iter() {
         if let Some(constructs) = construct_map.get(&construct_type) {
             let construct_identifier = format!("{{{{ {} }}}}", construct_type.as_lowercase());
-            expanded_template = expand_template(&mut expanded_template, &*construct_identifier, constructs, "[one_sentence_summary]");
+            expanded_template = expand_template(&mut expanded_template, &*construct_identifier, constructs);
         }
     }
 
@@ -104,7 +115,7 @@ mod tests {
             },
         ];
 
-        let expanded_template = expand_template(&mut template_str, "{{ interface }}", &constructs, "[one_sentence_summary]");
+        let expanded_template = expand_template(&mut template_str, "{{ interface }}", &constructs);
         let expected_output = "## Key Interfaces\n- **`PublicInterface`**: Public interface summary.\n";
 
         assert_eq!(expanded_template, expected_output);
