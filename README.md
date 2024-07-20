@@ -2,7 +2,8 @@
 
 # Documentation Generator
 
-This project is a Rust-based documentation generator for C# codebases. It scans C# source files, extracts relevant constructs (classes, structs, enums, and interfaces), and generates documentation based on a provided template.
+This project is a Rust-based documentation generator for C# codebases. It scans C# source files, extracts relevant
+constructs (classes, structs, enums, and interfaces), and generates documentation based on a provided template.
 
 ## Features
 
@@ -29,16 +30,16 @@ This project is a Rust-based documentation generator for C# codebases. It scans 
    [Brief overview of the system]
 
    ## Key Interfaces
-    - **{{ interface }}**: [one_sentence_summary].
-
+   - **`[interface_name]`**: [summary]
+   
    ## Main Classes
-    - **{{ class }}**: [one_sentence_summary].
-
+   - [access_modifier] **`[class_name]`**: [one_sentence_summary]
+   
    ## Structs
-    - **{{ struct }}**: [one_sentence_summary].
-
+   - **`[struct_name]`**: [one_sentence_summary]
+   
    ## Enums
-    - **{{ enum }}**: [one_sentence_summary].
+   - **`[enum_name]`**: [one_sentence_summary]
 
    ## Usage
    [Usage examples]
