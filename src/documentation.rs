@@ -40,11 +40,7 @@ pub fn generate_documentation(
     output_dir: &PathBuf,
     output_file: &PathBuf,
 ) -> Result<(), io::Error> {
-    let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
-
-    for construct in constructs {
-        construct_map.entry(construct.construct_type.clone()).or_insert_with(Vec::new).push(construct);
-    }
+    let construct_map = categorize_constructs(constructs);
 
     let mut expanded_template = template.to_string();
     for construct_type in ConstructType::iter() {
@@ -58,6 +54,15 @@ pub fn generate_documentation(
     let mut output_file = File::create(output_path)?;
     output_file.write_all(expanded_template.as_bytes())?;
     Ok(())
+}
+
+fn categorize_constructs(constructs: Vec<ConstructInfo>) -> HashMap<ConstructType, Vec<ConstructInfo>> {
+    let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
+
+    for construct in constructs {
+        construct_map.entry(construct.construct_type.clone()).or_insert_with(Vec::new).push(construct);
+    }
+    construct_map
 }
 
 #[cfg(test)]
