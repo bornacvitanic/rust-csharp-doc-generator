@@ -15,25 +15,28 @@ pub fn load_template(template_file: &PathBuf) -> Result<String, io::Error> {
     Ok(template_content)
 }
 
-fn expand_template(template: &mut String, placeholder: &str, items: &[ConstructInfo]) -> String {
+fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<ConstructInfo>>) -> String {
     let mut expanded_template = String::new();
 
     for line in template.lines() {
-        if line.contains(placeholder) {
-            for item in items {
-                let mut expanded_line = line.replace(placeholder, &item.name);
-
-                if expanded_line.contains("[summary]") {
-                    let summary = item.docstring.clone().unwrap_or_else(|| "[summary]".to_string());
-                    expanded_line = expanded_line.replace("[summary]", &summary);
-                } else if expanded_line.contains("[one_sentence_summary]") {
-                    let summary = item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string());
-                    expanded_line = expanded_line.replace("[one_sentence_summary]", substring_until_dot(&summary));
+        let mut pass_through_line = true;
+        for construct_type in ConstructType::iter() {
+            let construct_placeholder = format!("{{{{ {} }}}}", construct_type.as_lowercase());
+            if line.contains(&construct_placeholder) {
+                if let Some(constructs) = construct_map.get(&construct_type) {
+                    pass_through_line = false;
+                    for item in constructs {
+                        let mut expanded_line = line.replace(&construct_placeholder, &item.name);
+                        expanded_line = expanded_line.replace("[summary]", &item.docstring.clone().unwrap_or_else(|| "[summary]".to_string()));
+                        expanded_line = expanded_line.replace("[one_sentence_summary]", &substring_until_dot(&item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string())).to_string());
+                        expanded_template.push_str(&expanded_line);
+                        expanded_template.push('\n');
+                    }
                 }
-                expanded_template.push_str(&expanded_line);
-                expanded_template.push('\n');
+                break;
             }
-        } else {
+        }
+        if pass_through_line {
             expanded_template.push_str(line);
             expanded_template.push('\n');
         }
@@ -45,6 +48,14 @@ fn substring_until_dot(s: &str) -> &str {
     s.split('.').next().unwrap_or(s)
 }
 
+fn categorize_constructs(constructs: Vec<ConstructInfo>) -> HashMap<ConstructType, Vec<ConstructInfo>> {
+    let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
+    for construct in constructs {
+        construct_map.entry(construct.construct_type.clone()).or_insert_with(Vec::new).push(construct);
+    }
+    construct_map
+}
+
 pub fn generate_documentation(
     constructs: Vec<ConstructInfo>,
     template: &str,
@@ -52,28 +63,12 @@ pub fn generate_documentation(
     output_file: &PathBuf,
 ) -> Result<(), io::Error> {
     let construct_map = categorize_constructs(constructs);
-
-    let mut expanded_template = template.to_string();
-    for construct_type in ConstructType::iter() {
-        if let Some(constructs) = construct_map.get(&construct_type) {
-            let construct_identifier = format!("{{{{ {} }}}}", construct_type.as_lowercase());
-            expanded_template = expand_template(&mut expanded_template, &*construct_identifier, constructs);
-        }
-    }
+    let expanded_template = expand_template(template, &construct_map);
 
     let output_path = output_dir.join(output_file);
     let mut output_file = File::create(output_path)?;
     output_file.write_all(expanded_template.as_bytes())?;
     Ok(())
-}
-
-fn categorize_constructs(constructs: Vec<ConstructInfo>) -> HashMap<ConstructType, Vec<ConstructInfo>> {
-    let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
-
-    for construct in constructs {
-        construct_map.entry(construct.construct_type.clone()).or_insert_with(Vec::new).push(construct);
-    }
-    construct_map
 }
 
 #[cfg(test)]
@@ -104,20 +99,47 @@ mod tests {
 
     #[test]
     fn test_expand_template() {
-        let template = "## Key Interfaces\n- **`{{ interface }}`**: [one_sentence_summary].\n";
-        let mut template_str = template.to_string();
+        let template = "
+        # Documentation
+
+        ## Classes
+        - **{{ class }}**: [one_sentence_summary]
+
+        ## Structs
+        - **{{ struct }}**: [one_sentence_summary]
+
+        ## Interfaces
+        - **{{ interface }}**: [one_sentence_summary]
+
+        ## Enums
+        - **{{ enum }}**: [one_sentence_summary]
+        ";
+
         let constructs = vec![
-            ConstructInfo {
-                name: "PublicInterface".to_string(),
-                access_modifier: AccessModifier::Public,
-                docstring: Some("Public interface summary".to_string()),
-                construct_type: ConstructType::Interface,
-            },
+            ConstructInfo { name: "MyClass".to_string(), docstring: Some("This is a class.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Class },
+            ConstructInfo { name: "MyStruct".to_string(), docstring: Some("This is a struct.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Struct },
+            ConstructInfo { name: "MyInterface".to_string(), docstring: Some("This is an interface.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Interface },
+            ConstructInfo { name: "MyEnum".to_string(), docstring: Some("This is an enum.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Enum },
         ];
 
-        let expanded_template = expand_template(&mut template_str, "{{ interface }}", &constructs);
-        let expected_output = "## Key Interfaces\n- **`PublicInterface`**: Public interface summary.\n";
+        let construct_map = categorize_constructs(constructs);
+        let result = expand_template(template, &construct_map);
+        let expected = "
+        # Documentation
 
-        assert_eq!(expanded_template, expected_output);
+        ## Classes
+        - **MyClass**: This is a class
+
+        ## Structs
+        - **MyStruct**: This is a struct
+
+        ## Interfaces
+        - **MyInterface**: This is an interface
+
+        ## Enums
+        - **MyEnum**: This is an enum
+        ";
+
+        assert_eq!(result.trim(), expected.trim());
     }
 }
