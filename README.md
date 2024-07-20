@@ -1,3 +1,5 @@
+[![Test](https://github.com/bornacvitanic/rust-csharp-doc-generator/actions/workflows/rust.yml/badge.svg)](https://github.com/bornacvitanic/rust-csharp-doc-generator/actions/workflows/rust.yml) [![Download](https://img.shields.io/badge/download-releases-blue.svg)](https://github.com/bornacvitanic/rust-csharp-doc-generator/releases)
+
 # Documentation Generator
 
 This project is a Rust-based documentation generator for C# codebases. It scans C# source files, extracts relevant constructs (classes, structs, enums, and interfaces), and generates documentation based on a provided template.
