@@ -245,11 +245,6 @@ pub fn skip_due_to_comment(line: &str, inside_multiline_comment: &mut bool) -> b
     result
 }
 
-
-pub fn filter_constructs_by_variant(constructs: &[ConstructInfo], variant: ConstructType) -> Vec<&ConstructInfo> {
-    constructs.iter().filter(|&construct| construct.construct_type == variant).collect()
-}
-
 #[cfg(test)]
 mod tests {
     use std::fs;
@@ -406,17 +401,5 @@ mod tests {
         let line = "public interface MyInterface // Comment";
         assert!(!skip_due_to_comment(line, &mut inside_multiline_comment));
         assert!(!inside_multiline_comment);
-    }
-
-
-    #[test]
-    fn test_filter_constructs_by_variant() {
-        let constructs = vec![
-            ConstructInfo { docstring: None, access_modifier: AccessModifier::Public, construct_type: ConstructType::Class, name: "Class1".to_string() },
-            ConstructInfo { docstring: None, access_modifier: AccessModifier::Public, construct_type: ConstructType::Struct, name: "Struct1".to_string() },
-        ];
-        let filtered = filter_constructs_by_variant(&constructs, ConstructType::Class);
-        assert_eq!(filtered.len(), 1);
-        assert_eq!(filtered[0].name, "Class1");
     }
 }

@@ -3,8 +3,7 @@ mod parser;
 mod documentation;
 
 use structopt::StructOpt;
-use std::io::Read;
-use serde::Serialize;
+
 use crate::cli::Cli;
 use crate::documentation::{generate_documentation, load_template};
 use crate::parser::{find_cs_files, parse_cs_files};
