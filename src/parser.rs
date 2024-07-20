@@ -3,12 +3,13 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 use std::str::FromStr;
+
 use regex::Regex;
 use serde::Serialize;
-use walkdir::WalkDir;
-use strum_macros::EnumIter;
-use strum_macros::{EnumString, Display};
 use strum::IntoEnumIterator;
+use strum_macros::{Display, EnumString};
+use strum_macros::EnumIter;
+use walkdir::WalkDir;
 
 #[derive(Debug, Serialize, PartialEq, EnumString, Display, EnumIter)]
 #[strum(serialize_all = "snake_case")]
@@ -38,6 +39,10 @@ impl ConstructType {
     pub fn as_lowercase(&self) -> String {
         format!("{:?}", self).to_lowercase()
     }
+
+    pub fn as_placeholder(&self) -> String {
+        format!("{{{{ {} }}}}", self.as_lowercase())
+    }
 }
 
 impl AccessModifier {
@@ -51,7 +56,7 @@ impl AccessModifier {
 pub fn find_cs_files(dir: &PathBuf) -> Vec<PathBuf> {
     let mut cs_files = Vec::new();
 
-    for entry in WalkDir::new(dir).into_iter().filter_map(Result::ok){
+    for entry in WalkDir::new(dir).into_iter().filter_map(Result::ok) {
         if entry.path().extension().map_or(false, |ext| ext == "cs") {
             cs_files.push(entry.path().to_path_buf())
         }
@@ -100,7 +105,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
                             existing.push(' ');
                             existing.push_str(&doc_line);
                             Some(existing)
-                        },
+                        }
                         None => Some(doc_line)
                     };
                 }
@@ -180,7 +185,7 @@ impl DocstringExtractor {
                         return Some(cleaned_text.trim().to_string());
                     }
                 }
-            } else  if has_opening_tag {
+            } else if has_opening_tag {
                 self.in_summary = true;
                 if let Some(start) = doc_line.find(opening_tag) {
                     self.summary_content.push_str(&doc_line[start + 9..]); // Append text after <summary>
@@ -246,9 +251,10 @@ pub fn filter_constructs_by_variant(constructs: &[ConstructInfo], variant: Const
 }
 
 #[cfg(test)]
-mod tests{
-    use super::*;
+mod tests {
     use std::fs;
+
+    use super::*;
 
     #[test]
     fn test_construct_type_as_lowercase() {

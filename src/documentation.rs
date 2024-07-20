@@ -21,7 +21,7 @@ fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<Co
     for line in template.lines() {
         let mut pass_through_line = true;
         for construct_type in ConstructType::iter() {
-            let construct_placeholder = format!("{{{{ {} }}}}", construct_type.as_lowercase());
+            let construct_placeholder = construct_type.as_placeholder();
             if line.contains(&construct_placeholder) {
                 if let Some(constructs) = construct_map.get(&construct_type) {
                     pass_through_line = false;
