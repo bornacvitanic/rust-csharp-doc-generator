@@ -10,7 +10,7 @@
 
 ## Main Classes
 
-- **`[class_name]`**: [one_sentence_summary]
+- [access_modifier] **`[class_name]`**: [one_sentence_summary]
 
 ## Structs
 

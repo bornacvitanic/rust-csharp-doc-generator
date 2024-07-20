@@ -29,6 +29,7 @@ fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<Co
                         let mut expanded_line = line.replace(&construct_placeholder, &item.name);
                         expanded_line = expanded_line.replace("[summary]", &item.docstring.clone().unwrap_or_else(|| "[summary]".to_string()));
                         expanded_line = expanded_line.replace("[one_sentence_summary]", &substring_until_dot(&item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string())).to_string());
+                        expanded_line = expanded_line.replace("[access_modifier]", &item.access_modifier.to_string());
                         expanded_template.push_str(&expanded_line);
                         expanded_template.push('\n');
                     }

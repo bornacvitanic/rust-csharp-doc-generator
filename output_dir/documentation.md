@@ -15,16 +15,16 @@
 
 ## Main Classes
 
-- **`PublicClass`**: This is a sample class with varied XML tags
-- **`PrivateClass`**: [one_sentence_summary]
-- **`ProtectedClass`**: [one_sentence_summary]
-- **`InternalClass`**: [one_sentence_summary]
-- **`AbstractClass`**: [one_sentence_summary]
-- **`StaticClass`**: [one_sentence_summary]
-- **`PartialClass`**: [one_sentence_summary]
-- **`MixedClass1`**: [one_sentence_summary]
-- **`OuterClass`**: [one_sentence_summary]
-- **`InnerClass`**: [one_sentence_summary]
+- public **`PublicClass`**: This is a sample class with varied XML tags
+- private **`PrivateClass`**: [one_sentence_summary]
+- protected **`ProtectedClass`**: [one_sentence_summary]
+- internal **`InternalClass`**: [one_sentence_summary]
+- public **`AbstractClass`**: [one_sentence_summary]
+- public **`StaticClass`**: [one_sentence_summary]
+- public **`PartialClass`**: [one_sentence_summary]
+- public **`MixedClass1`**: [one_sentence_summary]
+- public **`OuterClass`**: [one_sentence_summary]
+- public **`InnerClass`**: [one_sentence_summary]
 
 ## Structs
 
