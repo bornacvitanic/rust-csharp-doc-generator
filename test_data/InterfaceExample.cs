@@ -1,5 +1,5 @@
 /// <summary>
-/// XML documentation comment for an interface !Comment!
+/// XML documentation comment for an interface !Comment!. It has multiple sentences.
 /// </summary>
 public interface PublicInterface {
     // Interface body

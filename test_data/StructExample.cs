@@ -1,5 +1,6 @@
 /// <summary>
-/// XML documentation comment for a struct !Comment!
+/// XML documentation comment for a struct !Comment!. Multiple sentences.
+/// And multiple lines.
 /// </summary>
 public struct PublicStruct {
     /* Inline multi-line comment inside a struct !Comment! */ public int Field;

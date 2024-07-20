@@ -1,5 +1,6 @@
 /// <summary>
-/// XML documentation comment for an enum !Comment!
+/// XML documentation comment for an enum !Comment!.
+/// It has multiple lines.
 /// </summary>
 public enum PublicEnum {
     // Enum body
