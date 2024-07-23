@@ -15,7 +15,10 @@ pub fn load_template(template_file: &PathBuf) -> Result<String, io::Error> {
     Ok(template_content)
 }
 
-fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<ConstructInfo>>) -> String {
+fn expand_template(
+    template: &str,
+    construct_map: &HashMap<ConstructType, Vec<ConstructInfo>>,
+) -> String {
     let mut expanded_template = String::new();
 
     for line in template.lines() {
@@ -27,9 +30,24 @@ fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<Co
                     pass_through_line = false;
                     for item in constructs {
                         let mut expanded_line = line.replace(&construct_placeholder, &item.name);
-                        expanded_line = expanded_line.replace("[summary]", &item.docstring.clone().unwrap_or_else(|| "[summary]".to_string()));
-                        expanded_line = expanded_line.replace("[one_sentence_summary]", substring_until_dot(&item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string())));
-                        expanded_line = expanded_line.replace("[access_modifier]", &item.access_modifier.to_string());
+                        expanded_line = expanded_line.replace(
+                            "[summary]",
+                            &item
+                                .docstring
+                                .clone()
+                                .unwrap_or_else(|| "[summary]".to_string()),
+                        );
+                        expanded_line = expanded_line.replace(
+                            "[one_sentence_summary]",
+                            substring_until_dot(
+                                &item
+                                    .docstring
+                                    .clone()
+                                    .unwrap_or_else(|| "[one_sentence_summary]".to_string()),
+                            ),
+                        );
+                        expanded_line = expanded_line
+                            .replace("[access_modifier]", &item.access_modifier.to_string());
                         expanded_template.push_str(&expanded_line);
                         expanded_template.push('\n');
                     }
@@ -49,10 +67,15 @@ fn substring_until_dot(s: &str) -> &str {
     s.split('.').next().unwrap_or(s)
 }
 
-fn categorize_constructs(constructs: Vec<ConstructInfo>) -> HashMap<ConstructType, Vec<ConstructInfo>> {
+fn categorize_constructs(
+    constructs: Vec<ConstructInfo>,
+) -> HashMap<ConstructType, Vec<ConstructInfo>> {
     let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
     for construct in constructs {
-        construct_map.entry(construct.construct_type.clone()).or_default().push(construct);
+        construct_map
+            .entry(construct.construct_type.clone())
+            .or_default()
+            .push(construct);
     }
     construct_map
 }
@@ -123,10 +146,30 @@ mod tests {
         );
 
         let constructs = vec![
-            ConstructInfo { name: "MyClass".to_string(), docstring: Some("This is a class.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Class },
-            ConstructInfo { name: "MyStruct".to_string(), docstring: Some("This is a struct.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Struct },
-            ConstructInfo { name: "MyInterface".to_string(), docstring: Some("This is an interface.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Interface },
-            ConstructInfo { name: "MyEnum".to_string(), docstring: Some("This is an enum.".to_string()), access_modifier: AccessModifier::Public, construct_type: ConstructType::Enum },
+            ConstructInfo {
+                name: "MyClass".to_string(),
+                docstring: Some("This is a class.".to_string()),
+                access_modifier: AccessModifier::Public,
+                construct_type: ConstructType::Class,
+            },
+            ConstructInfo {
+                name: "MyStruct".to_string(),
+                docstring: Some("This is a struct.".to_string()),
+                access_modifier: AccessModifier::Public,
+                construct_type: ConstructType::Struct,
+            },
+            ConstructInfo {
+                name: "MyInterface".to_string(),
+                docstring: Some("This is an interface.".to_string()),
+                access_modifier: AccessModifier::Public,
+                construct_type: ConstructType::Interface,
+            },
+            ConstructInfo {
+                name: "MyEnum".to_string(),
+                docstring: Some("This is an enum.".to_string()),
+                access_modifier: AccessModifier::Public,
+                construct_type: ConstructType::Enum,
+            },
         ];
 
         let construct_map = categorize_constructs(constructs);

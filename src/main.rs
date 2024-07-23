@@ -5,8 +5,8 @@ use crate::documentation::{generate_documentation, load_template};
 use crate::parser::{find_cs_files, parse_cs_files};
 
 mod cli;
-mod parser;
 mod documentation;
+mod parser;
 
 fn main() {
     let args = Cli::from_args();
@@ -28,7 +28,9 @@ fn main() {
     };
 
     // Generate the documentation
-    if let Err(e) = generate_documentation(constructs, &template, &args.output_dir, &args.output_file) {
+    if let Err(e) =
+        generate_documentation(constructs, &template, &args.output_dir, &args.output_file)
+    {
         eprintln!("Failed to generate documentation: {}", e);
     }
 }

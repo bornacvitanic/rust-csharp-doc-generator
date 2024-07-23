@@ -7,8 +7,8 @@ use std::str::FromStr;
 use regex::Regex;
 use serde::Serialize;
 use strum::IntoEnumIterator;
-use strum_macros::{Display, EnumString};
 use strum_macros::EnumIter;
+use strum_macros::{Display, EnumString};
 use walkdir::WalkDir;
 
 #[derive(Debug, Serialize, PartialEq, EnumString, Display, EnumIter)]
@@ -105,7 +105,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
                         existing.push_str(&doc_line);
                         Some(existing)
                     }
-                    None => Some(doc_line)
+                    None => Some(doc_line),
                 };
             };
 
@@ -117,7 +117,9 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
 
             for construct in ConstructType::iter() {
                 if let Some(name) = extract_definition(line, &construct.as_lowercase()) {
-                    if construct != ConstructType::Class || seen_partial_classes.insert(name.clone()) {
+                    if construct != ConstructType::Class
+                        || seen_partial_classes.insert(name.clone())
+                    {
                         constructs.push(ConstructInfo {
                             docstring: current_docstring.clone(),
                             access_modifier,
@@ -177,7 +179,9 @@ impl DocstringExtractor {
                     if let Some(end) = doc_line.find(closing_tag) {
                         self.summary_content.push_str(&doc_line[start + 9..end]);
                         // Clean the accumulated summary content and return it
-                        let cleaned_text = xml_tag_regex.replace_all(&self.summary_content, "").to_string();
+                        let cleaned_text = xml_tag_regex
+                            .replace_all(&self.summary_content, "")
+                            .to_string();
                         self.summary_content.clear(); // Clear the content for the next block
                         return Some(cleaned_text.trim().to_string());
                     }
@@ -194,7 +198,9 @@ impl DocstringExtractor {
                 self.in_summary = false;
 
                 // Clean the accumulated summary content and return it
-                let cleaned_text = xml_tag_regex.replace_all(&self.summary_content, "").to_string();
+                let cleaned_text = xml_tag_regex
+                    .replace_all(&self.summary_content, "")
+                    .to_string();
                 self.summary_content.clear(); // Clear the content for the next block
                 return Some(cleaned_text.trim().to_string());
             } else if self.in_summary {
@@ -298,17 +304,32 @@ mod tests {
 
     #[test]
     fn test_extract_access_modifier() {
-        assert_eq!(extract_access_modifier("public class MyClass"), AccessModifier::Public);
-        assert_eq!(extract_access_modifier("private class MyClass"), AccessModifier::Private);
-        assert_eq!(extract_access_modifier("protected class MyClass"), AccessModifier::Protected);
-        assert_eq!(extract_access_modifier("internal class MyClass"), AccessModifier::Internal);
+        assert_eq!(
+            extract_access_modifier("public class MyClass"),
+            AccessModifier::Public
+        );
+        assert_eq!(
+            extract_access_modifier("private class MyClass"),
+            AccessModifier::Private
+        );
+        assert_eq!(
+            extract_access_modifier("protected class MyClass"),
+            AccessModifier::Protected
+        );
+        assert_eq!(
+            extract_access_modifier("internal class MyClass"),
+            AccessModifier::Internal
+        );
     }
 
     #[test]
     fn test_extract_single_line_docstring() {
         let mut extractor = DocstringExtractor::new();
         let line = "/// <summary>This is a single-line summary</summary>";
-        assert_eq!(extractor.extract_docstring(line), Some("This is a single-line summary".to_string()));
+        assert_eq!(
+            extractor.extract_docstring(line),
+            Some("This is a single-line summary".to_string())
+        );
     }
 
     #[test]
@@ -339,7 +360,10 @@ mod tests {
         for line in lines {
             result = extractor.extract_docstring(line);
         }
-        assert_eq!(result, Some("This is a single-line summary inside multi-line but not ended yet".to_string()));
+        assert_eq!(
+            result,
+            Some("This is a single-line summary inside multi-line but not ended yet".to_string())
+        );
     }
 
     #[test]
