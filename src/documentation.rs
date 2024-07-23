@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use strum::IntoEnumIterator;
 
@@ -28,7 +28,7 @@ fn expand_template(template: &str, construct_map: &HashMap<ConstructType, Vec<Co
                     for item in constructs {
                         let mut expanded_line = line.replace(&construct_placeholder, &item.name);
                         expanded_line = expanded_line.replace("[summary]", &item.docstring.clone().unwrap_or_else(|| "[summary]".to_string()));
-                        expanded_line = expanded_line.replace("[one_sentence_summary]", &substring_until_dot(&item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string())).to_string());
+                        expanded_line = expanded_line.replace("[one_sentence_summary]", substring_until_dot(&item.docstring.clone().unwrap_or_else(|| "[one_sentence_summary]".to_string())));
                         expanded_line = expanded_line.replace("[access_modifier]", &item.access_modifier.to_string());
                         expanded_template.push_str(&expanded_line);
                         expanded_template.push('\n');
@@ -52,7 +52,7 @@ fn substring_until_dot(s: &str) -> &str {
 fn categorize_constructs(constructs: Vec<ConstructInfo>) -> HashMap<ConstructType, Vec<ConstructInfo>> {
     let mut construct_map: HashMap<ConstructType, Vec<ConstructInfo>> = HashMap::new();
     for construct in constructs {
-        construct_map.entry(construct.construct_type.clone()).or_insert_with(Vec::new).push(construct);
+        construct_map.entry(construct.construct_type.clone()).or_default().push(construct);
     }
     construct_map
 }
@@ -60,8 +60,8 @@ fn categorize_constructs(constructs: Vec<ConstructInfo>) -> HashMap<ConstructTyp
 pub fn generate_documentation(
     constructs: Vec<ConstructInfo>,
     template: &str,
-    output_dir: &PathBuf,
-    output_file: &PathBuf,
+    output_dir: &Path,
+    output_file: &Path,
 ) -> Result<(), io::Error> {
     let construct_map = categorize_constructs(constructs);
     let expanded_template = expand_template(template, &construct_map);

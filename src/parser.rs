@@ -98,18 +98,15 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
         for line in file_content.lines() {
             let line = line.trim();
 
-            match extractor.extract_docstring(line) {
-                Some(doc_line) => {
-                    current_docstring = match current_docstring {
-                        Some(mut existing) => {
-                            existing.push(' ');
-                            existing.push_str(&doc_line);
-                            Some(existing)
-                        }
-                        None => Some(doc_line)
-                    };
-                }
-                None => {}
+            if let Some(doc_line) = extractor.extract_docstring(line) {
+                current_docstring = match current_docstring {
+                    Some(mut existing) => {
+                        existing.push(' ');
+                        existing.push_str(&doc_line);
+                        Some(existing)
+                    }
+                    None => Some(doc_line)
+                };
             };
 
             if skip_due_to_comment(line, &mut inside_multiline_comment) {
@@ -119,7 +116,7 @@ pub fn parse_cs_files(files: Vec<PathBuf>) -> Vec<ConstructInfo> {
             let access_modifier = extract_access_modifier(line);
 
             for construct in ConstructType::iter() {
-                if let Some(name) = extract_definition(line, &*construct.as_lowercase()) {
+                if let Some(name) = extract_definition(line, &construct.as_lowercase()) {
                     if construct != ConstructType::Class || seen_partial_classes.insert(name.clone()) {
                         constructs.push(ConstructInfo {
                             docstring: current_docstring.clone(),
