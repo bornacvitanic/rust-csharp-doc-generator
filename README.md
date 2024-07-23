@@ -16,6 +16,31 @@ constructs (classes, structs, enums, and interfaces), and generates documentatio
 - Supports different access modifiers and types of constructs.
 - Can be integrated into CI/CD pipelines for automated documentation generation.
 
+## Roadmap
+
+- **Interactive CLI**: Enhance the CLI to offer interactive prompts for users who prefer not to use command-line
+  arguments directly.
+- **Template Customization**: Allow users to define their own placeholders and rules within the template to support more
+  flexible documentation styles.
+- **Incremental Parsing**: Implement a feature to only re-parse files that have changed since the last run, improving
+  performance for large projects.
+- **Multiple Output Formats**: Support generating documentation in various formats such as HTML, PDF, and Markdown to
+  accommodate different use cases.
+- **Code Examples**: Extract and include code examples from the C# files, providing context and usage examples in the
+  generated documentation.
+- **Syntax Highlighting**: Integrate syntax highlighting for code snippets within the generated documentation for better
+  readability.
+- **Versioning**: Support versioned documentation, allowing users to generate and maintain documentation for different
+  versions of their codebase.
+- **Configuration File**: Allow users to define settings and preferences in a configuration file (e.g., JSON, TOML) for
+  more convenient customization.
+- **CI/CD Integration**: Provide easy integration with CI/CD pipelines (e.g., GitHub Actions, Travis CI) to automate
+  documentation generation on code changes.
+- **Documentation Coverage Report**: Generate a report showing the coverage of documentation (e.g., percentage of
+  classes, methods, and properties documented).
+- **Error Handling and Reporting**: Improve error handling and provide detailed error reports to help users troubleshoot
+  issues with their input files or templates.
+
 ## Getting Started
 
 ### Prerequisites
