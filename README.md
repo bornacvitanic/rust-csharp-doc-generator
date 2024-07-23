@@ -1,4 +1,7 @@
-[![Test](https://github.com/bornacvitanic/rust-csharp-doc-generator/actions/workflows/rust.yml/badge.svg)](https://github.com/bornacvitanic/rust-csharp-doc-generator/actions/workflows/rust.yml) [![Download](https://img.shields.io/badge/download-releases-blue.svg)](https://github.com/bornacvitanic/rust-csharp-doc-generator/releases)
+[![Test](https://github.com/bornacvitanic/rust-csharp-doc-generator/actions/workflows/rust.yml/badge.svg)](https://github.com/bornacvitanic/rust-csharp-doc-generator/actions/workflows/rust.yml)
+[![dependency status](https://deps.rs/repo/github/bornacvitanic/rust-csharp-doc-generator/status.svg)](https://deps.rs/repo/github/bornacvitanic/rust-csharp-doc-generator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Download](https://img.shields.io/badge/download-releases-blue.svg)](https://github.com/bornacvitanic/rust-csharp-doc-generator/releases)
 
 # Documentation Generator
 
