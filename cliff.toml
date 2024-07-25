@@ -47,7 +47,7 @@ commit_preprocessors = [
 ]
 # regex for parsing and grouping commits
 commit_parsers = [
-    { message = "(?i)\\bdocs?|documentation|\\.md\\b", group = "Documentation" },
+    { message = "(?i)\\b(doc|docs)\\b|\\.md\\b", group = "Documentation" },
     { message = "(?i)\\bfix(ed|es|ing|s)?\\b", group = "Bug Fixes" },
     { message = "(?i)test(s?)\\b", group = "Testing" },
     { message = "(?i)^revert", group = "Revert" },
