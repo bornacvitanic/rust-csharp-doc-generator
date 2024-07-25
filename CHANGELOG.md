@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
-- Fix README.md having wrong crates.io link
+- Add initial CHANGELOG.md file
 
 - Update README.md to add crates.io badge
 
@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 
 
 ### Features
+
+- Add cliff.toml file for changelog generation
 
 - Update Cargo.toml to add more metadata
 
@@ -40,36 +42,42 @@ All notable changes to this project will be documented in this file.
 
 - Update README.md to follow the new placeholders
 
-- Update documentation.rs to add support for access modifiers
-
-- Update documentation.rs to support cleaner placeholders
-
-- Update documentation.rs and parser.rs to extract formating of construct_types to placeholders to separate method
-
-- Update documentation.rs to clean up the code
-
-- Update documentation.rs to handle fully summaries and one sentence summaries
-
-- Update test_data to improve their docstrings
-
 - Update template.md to have both summary and one_sentence_summary
-
-- Update documentation.rs to extract construct categorization logic to separate method
-
-- Update documentation.rs to add tests
 
 - Update README.md
 - Merge branch 'main' of https://github.com/bornacvitanic/rust-csharp-doc-generator
 
 
+### Features
+
+- Update documentation.rs to add support for access modifiers
+
+
+### Styling
+
+- Update documentation.rs to clean up the code
+
+
 ### Testing
+
+- Update documentation.rs to add tests
 
 - Update parser.rs to better handle all ConstructTypes and to add better tests
 
 
 ### Updates
 
+- Update documentation.rs to support cleaner placeholders
+
 - Update parser.rs and main.rs to remove unused imports and functions
+
+- Update documentation.rs and parser.rs to extract formating of construct_types to placeholders to separate method
+
+- Update documentation.rs to handle fully summaries and one sentence summaries
+
+- Update test_data to improve their docstrings
+
+- Update documentation.rs to extract construct categorization logic to separate method
 
 
 ## [0.1.0] - 2024-07-19
@@ -93,27 +101,7 @@ All notable changes to this project will be documented in this file.
 
 - Add README.md
 
-- Update documentation.rs to handle hash maps in a more rust idiomatic way
-
-- Update documentation.rs to skip certain construct types if there aren't any detected
-
-- Update parser.rs to implement DocstringExtractor to better handle multiline docstrings and to only extract summaries
-
-- Update documentation.rs to make template expanding more dynamic using a HashMap of vectors for each construct type
-
-- Update parser.rs to extract docstring extraction logic to separate method
-
-- Update parser.rs, documentation.rs and main.rs to support reading of access modifiers and docstrings
-
-- Update ClassExample.cs to add nother line to the class docstring
-
-- Update documentation.rs to add better error handling
-
-- Update documentation.rs to manually expand template without using tera
-
 - Update template.md to improve formatting of documentation
-
-- Add documentation.rs to generate documentation using tera
 
 
 ### Features
@@ -121,6 +109,14 @@ All notable changes to this project will be documented in this file.
 - Update Cargo.toml to add more package info
 
 - Update Cargo.toml to add more package info
+
+- Update parser.rs to implement DocstringExtractor to better handle multiline docstrings and to only extract summaries
+
+- Update ClassExample.cs to add nother line to the class docstring
+
+- Update documentation.rs to add better error handling
+
+- Add documentation.rs to generate documentation using tera
 
 - Update main.rs to add ConstructInfo enum, a method to extract a construct definition and capability to detect any C# construct
 
@@ -151,13 +147,25 @@ All notable changes to this project will be documented in this file.
 
 - Update Template to make it more generic
 
+- Update documentation.rs to handle hash maps in a more rust idiomatic way
+
+- Update documentation.rs to skip certain construct types if there aren't any detected
+
+- Update documentation.rs to make template expanding more dynamic using a HashMap of vectors for each construct type
+
 - Update parser.rs tomake access modifier parsing more dynamic
 
 - Update parser.rs to handle construct detection more dynamic via enum names
 
 - Update parser.rs to extract access modifier extraction
 
+- Update parser.rs to extract docstring extraction logic to separate method
+
 - Update parser.rs to use a more generic xml tag regex
+
+- Update parser.rs, documentation.rs and main.rs to support reading of access modifiers and docstrings
+
+- Update documentation.rs to manually expand template without using tera
 
 - Update main.rs to print out the detected constructs based on type
 
